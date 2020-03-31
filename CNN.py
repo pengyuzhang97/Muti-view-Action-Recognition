@@ -6,9 +6,6 @@ from torch.utils.data import DataLoader
 import torch.nn as nn
 from sklearn.model_selection import train_test_split, cross_val_score
 
-
-train_loader = DataLoader(dataset=train_loader, batch_size=572, shuffle=True)
-
 num_epochs = 25
 num_classes = 8
 learning_rate = 0.0005
