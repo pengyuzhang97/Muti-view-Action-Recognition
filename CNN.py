@@ -6,11 +6,12 @@ from torch.utils.data import DataLoader
 import torch.nn as nn
 from sklearn.model_selection import train_test_split, cross_val_score
 
-num_epochs = 25
-num_classes = 8
-learning_rate = 0.0005
+class args:
+    def __init__(self):
+        self.batch_size = 25
+        self.num_epochs = 25
+        self.lr = 0.0005
 
-# Model
 class ConvNet(nn.Module):
     def __init__(self):
         super(ConvNet, self).__init__()
@@ -30,8 +31,6 @@ class ConvNet(nn.Module):
         self.fc1 = nn.Linear(6*4*50, 1000)
         self.fc2 = nn.Linear(1000, 500)
 
-# Forward
-
     def forward(self, x):
         out = self.layer1(x)
         out = self.layer2(out)
@@ -41,3 +40,29 @@ class ConvNet(nn.Module):
         out = self.fc1(out)
         out = self.fc2(out)
         return out
+
+
+
+CNN = ConvNet()
+
+print(CNN())
+
+
+'''
+class CNN_LSTM(nn.Module):
+    def __init__(self):
+        super(CNN_LSTM,self).__init__()
+        self.cnn = ConvNet()
+        self.rnn = nn.LSTM(input_size=500,
+                           hidden_size=64,
+                           num_layers=1,
+                           batch_first=False)
+        self.linear = nn.Linear(64,10)
+
+    def forward(self,out):
+        batch_size, timesteps, C, H, W = out.size()
+'''
+
+
+
+
