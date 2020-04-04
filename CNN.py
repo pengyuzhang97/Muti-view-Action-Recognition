@@ -42,27 +42,22 @@ class ConvNet(nn.Module):
         return out
 
 
-
-CNN = ConvNet()
-
-print(CNN())
-
-
-'''
 class CNN_LSTM(nn.Module):
     def __init__(self):
         super(CNN_LSTM,self).__init__()
         self.cnn = ConvNet()
-        self.rnn = nn.LSTM(input_size=500,
+        self.lstm = nn.LSTM(input_size=500,
                            hidden_size=64,
                            num_layers=1,
                            batch_first=False)
         self.linear = nn.Linear(64,10)
 
     def forward(self,out):
-        batch_size, timesteps, C, H, W = out.size()
-'''
+         = out.size()
 
 
 
+data = torch.randn(2,1,64,48) #batch size = 2; channel = 1;
+module = ConvNet()
+result = module(data)
 
