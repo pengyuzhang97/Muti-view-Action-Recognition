@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 class args:
     def __init__(self):
         self.batch_size = 25
-        self.num_epochs = 25
+        self.num_epochs = 1
         self.lr = 0.0005
 
 class ConvNet(nn.Module):
@@ -30,7 +30,6 @@ class ConvNet(nn.Module):
         self.drop_out = nn.Dropout()
         self.fc1 = nn.Linear(6*4*50, 1000)
         self.fc2 = nn.Linear(1000, 500)
-
     def forward(self, x):
         out = self.layer1(x)
         out = self.layer2(out)
@@ -42,22 +41,32 @@ class ConvNet(nn.Module):
         return out
 
 
+
 class CNN_LSTM(nn.Module):
     def __init__(self):
         super(CNN_LSTM,self).__init__()
         self.cnn = ConvNet()
         self.lstm = nn.LSTM(input_size=500,
                            hidden_size=64,
-                           num_layers=1,
+                           num_layers=1, # h and c both have one layer
                            batch_first=False)
-        self.linear = nn.Linear(64,10)
+        self.linear = nn.Linear(64,10) # h->out requiring passing a fully-connected layer
+    def forward(self,x):
+        c_out = self.cnn(x)
+        c_out = torch.unsqueeze(c_out,1)
+        h0 = torch.randn(1,1,64) # initialize h0
+        c0 = torch.randn(1,1,64) # initialize c0
+        r_out, (h, c) = self.lstm(c_out,(h0,c0))
+        r_out = self.linear(r_out)
+        return r_out, h, c
 
-    def forward(self,out):
-         = out.size()
 
+'''data_ = torch.unsqueeze(torch.randn(25,64,48),1)#batch size of cnn = 25; channel = 1; # data after dataload, batch size = 25, shuffle=false
+# the format of input data should be [batch size,1(channel because of gray scale image), 64(# of rows),48(# of columns)]
+# output of cnn will be batch sizex500
 
+module = CNN_LSTM()
+out, h, c = module(data_)
+'''
 
-data = torch.randn(2,1,64,48) #batch size = 2; channel = 1;
-module = ConvNet()
-result = module(data)
-
+module = CNN_LSTM()
