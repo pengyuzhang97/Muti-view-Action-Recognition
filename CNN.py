@@ -16,7 +16,7 @@ class ConvNet(nn.Module):
     def __init__(self):
         super(ConvNet, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 20, kernel_size=5, stride=1, padding=0),
+            nn.Conv2d(25, 20, kernel_size=5, stride=1, padding=0),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer2 = nn.Sequential(
@@ -42,7 +42,7 @@ class ConvNet(nn.Module):
 
 
 
-class CNN_LSTM(nn.Module):
+'''class CNN_LSTM(nn.Module):
     def __init__(self):
         super(CNN_LSTM,self).__init__()
         self.cnn = ConvNet()
@@ -58,15 +58,27 @@ class CNN_LSTM(nn.Module):
         c0 = torch.randn(1,1,64) # initialize c0
         r_out, (h, c) = self.lstm(c_out,(h0,c0))
         r_out = self.linear(r_out)
+        h = self.linear(h)
         return r_out, h, c
-
+'''
 
 '''data_ = torch.unsqueeze(torch.randn(25,64,48),1)#batch size of cnn = 25; channel = 1; # data after dataload, batch size = 25, shuffle=false
 # the format of input data should be [batch size,1(channel because of gray scale image), 64(# of rows),48(# of columns)]
 # output of cnn will be batch sizex500
-
-module = CNN_LSTM()
-out, h, c = module(data_)
 '''
 
-module = CNN_LSTM()
+data_ = torch.randn(5,25,64,48)
+labels = np.ones(5)
+
+train_dataset = []
+for i in range(len(data_)):
+	train_dataset.append((data_[i],labels[i]))
+
+module = ConvNet()
+out = module(data_)
+
+
+'''module = CNN_LSTM()
+
+criterion = nn.CrossEntropyLoss
+optimizer = torch.optim.Adam'''

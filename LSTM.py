@@ -1,27 +1,74 @@
+#
+import pickle
+import numpy as np
 import torch
+from torch.utils.data import DataLoader
 import torch.nn as nn
+from sklearn.model_selection import train_test_split, cross_val_score
 
-
-class LSTM(nn.Module):
+class args:
     def __init__(self):
-        super(LSTM,self).__init__()
+        self.batch_size = 25
+        self.num_epochs = 1
+        self.lr = 0.0005
+
+class ConvNet(nn.Module):
+    def __init__(self):
+        super(ConvNet, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(1, 20, kernel_size=5, stride=1, padding=0),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(20, 50, kernel_size=5, stride=1, padding=0),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))
+        self.layer3 = nn.Sequential(
+            nn.Conv2d(50, 50, kernel_size=2, stride=1, padding=0),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))
+        self.drop_out = nn.Dropout()
+        self.fc1 = nn.Linear(6*4*50, 1000)
+        self.fc2 = nn.Linear(1000, 500)
+    def forward(self, x):
+        out = self.layer1(x)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = out.reshape(out.size(0), -1)
+        out = self.drop_out(out)
+        out = self.fc1(out)
+        out = self.fc2(out)
+        return out
+
+
+
+class CNN_LSTM(nn.Module):
+    def __init__(self):
+        super(CNN_LSTM,self).__init__()
+        self.cnn = ConvNet()
         self.lstm = nn.LSTM(input_size=500,
                            hidden_size=64,
-                           num_layers=1,
+                           num_layers=1, # h and c both have one layer
                            batch_first=False)
-        self.linear = nn.Linear(64,10)
-
+        self.linear = nn.Linear(64,11) # h->out requiring passing a fully-connected layer to match # of labels which is 11 different action
     def forward(self,x):
-        out, (h_n,c_n) = self.lstm(x)
-        #lstm_out = self.linear(out)
-        return out, h_n, c_n
+        c_out = self.cnn(x)
+        c_out = torch.unsqueeze(c_out,1)
+        h0 = torch.randn(1,1,64) # initialize h0
+        c0 = torch.randn(1,1,64) # initialize c0
+        r_out, (h, c) = self.lstm(c_out,(h0,c0))
+        r_out = self.linear(r_out)
+        h = self.linear(h)
+        return r_out, h, c
 
-data = torch.randn(2,500)  # output from cnn
-# sequence = 2,!!batch size of lstm=1!!, dimension of each sequence is 1x500
-# num_layers should euqal to batch size of cnn in my project
-data_ = torch.unsqueeze(data,1) # 25 1 5(1x500)
+data_ = torch.randn(5,25,64,48) # input of cnn: batch size = 5 which means 5 views; channels = 25 which means 25 frames of each view; 64x48->pixels of each frame
+# output from cnn should be 5x500
+# input of lstm = 5x500; # of sequence should be 5, batch size should be 5
 
-
-module = LSTM()
-out, h, c = module(data_)
+module1 = CNN_LSTM()# camera 1
+module2 = CNN_LSTM()# camera 2
+module3 = CNN_LSTM()# camera 3
+module4 = CNN_LSTM()# camera 4
+module5 = CNN_LSTM()# camera 5
+# requires 5 datasets, and each of them contains data from one camera
 
