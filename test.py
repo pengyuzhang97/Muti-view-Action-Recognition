@@ -8,11 +8,11 @@ from sklearn.model_selection import train_test_split, cross_val_score
 
 class args:
     def __init__(self):
-        self.batch_size = 25
+        self.batch_size = 50
         self.num_epochs = 1
         self.lr = 0.0005
 
-args = args()
+arg = args()
 
 class ConvNet(nn.Module):
     def __init__(self):
@@ -27,7 +27,7 @@ class ConvNet(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer3 = nn.Sequential(
             nn.Conv2d(50, 50, kernel_size=2, stride=1, padding=0),
-            nn.ReLU(),+
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.drop_out = nn.Dropout()
         self.fc1 = nn.Linear(6*4*50, 1000)
@@ -100,26 +100,25 @@ module5 = CNN_LSTM()# camera 5
 '''type and format of my input dataset'''
 '''==============================================='''
 # assuming I have 50 images from camera 1
-data1 = torch.randn(120*50,64,48)
+data1 = torch.randn(120*arg.batch_size, 64, 48)
 
 # Then I need to add one dimension which represents number of channels
-data1 = torch.unsqueeze(data1,1)
+data1 = torch.unsqueeze(data1, 1)
 
 
 # create labels
-labels = np.arange(1,121)
-
+labels = torch.tensor(np.array(np.arange(1,121)))
 
 # concatenate data and labels for future usage
-train_dataset1 = []
+'''train_dataset1 = []
 for i in range(len(data1)):
-	train_dataset1.append((data1[i],labels[i]))
+	train_dataset1.append((data1[i],labels[i]))'''
 
 
 # Until now I have created a training dataset which contains 50 elements(images), and all of them have already been labeled
 # Nest step is to using 'Dataloader' to create batch size
 
-dataloader1 = DataLoader(dataset=train_dataset1, batch_size=50, shuffle=False)
+dataloader1 = DataLoader(dataset=data1, batch_size=50, shuffle=False)
 
 '''=========================================================================================================================='''
 
@@ -130,15 +129,22 @@ dataloader1 = DataLoader(dataset=train_dataset1, batch_size=50, shuffle=False)
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(module1.parameters(), lr=args.lr)
+optimizer = torch.optim.Adam(module1.parameters(), lr=arg.lr)
 
 # train model
 loss_list = []
+output = torch.tensor([])
 #output = torch.zeros(len(dataloader1),100) # 100 will not change unless changing fully connectted layer
-for i, (images,labels) in enumerate(dataloader1):
+for i, (images) in enumerate(dataloader1):
     # Forward
-    output, _, _ = module1(images)
-    loss = criterion(output,labels)
-    loss_list.append(loss.item())
+    _, out, _ = module1(images)
+    #output = torch.stack([output,out], dim=0)
+    output = torch.cat([output,torch.squeeze(out,dim=1)], dim=0)
+    #loss = criterion(output, labels[i].unsqueeze(0).long())
+    #loss_list.append(loss.item())
 
+
+    '''output = torch.tensor(np.array(output.append(out)))
+    loss = criterion(output, labels)
+    loss_list.append(loss.item())'''
 

@@ -1,4 +1,3 @@
-#
 import pickle
 import numpy as np
 import torch
@@ -16,7 +15,7 @@ class ConvNet(nn.Module):
     def __init__(self):
         super(ConvNet, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(25, 20, kernel_size=5, stride=1, padding=0),
+            nn.Conv2d(1, 20, kernel_size=5, stride=1, padding=0),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer2 = nn.Sequential(
@@ -42,7 +41,7 @@ class ConvNet(nn.Module):
 
 
 
-'''class CNN_LSTM(nn.Module):
+class CNN_LSTM(nn.Module):
     def __init__(self):
         super(CNN_LSTM,self).__init__()
         self.cnn = ConvNet()
@@ -50,7 +49,7 @@ class ConvNet(nn.Module):
                            hidden_size=64,
                            num_layers=1, # h and c both have one layer
                            batch_first=False)
-        self.linear = nn.Linear(64,10) # h->out requiring passing a fully-connected layer
+        self.linear = nn.Linear(64,11) # h->out requiring passing a fully-connected layer to match # of labels which is 11 different action
     def forward(self,x):
         c_out = self.cnn(x)
         c_out = torch.unsqueeze(c_out,1)
@@ -60,12 +59,8 @@ class ConvNet(nn.Module):
         r_out = self.linear(r_out)
         h = self.linear(h)
         return r_out, h, c
-'''
 
-'''data_ = torch.unsqueeze(torch.randn(25,64,48),1)#batch size of cnn = 25; channel = 1; # data after dataload, batch size = 25, shuffle=false
-# the format of input data should be [batch size,1(channel because of gray scale image), 64(# of rows),48(# of columns)]
-# output of cnn will be batch sizex500
-'''
+
 
 data_ = torch.randn(5,25,64,48)
 labels = np.ones(5)
