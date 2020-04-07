@@ -11,6 +11,7 @@ class args:
         self.batch_size = 50
         self.num_epochs = 1
         self.lr = 0.0005
+        self.epoch = 1
 
 arg = args()
 
@@ -80,12 +81,12 @@ data5 = torch.randn(25,1,64,48)# the same defination as data1
 
 
 module1 = CNN_LSTM()# camera 1
-module2 = CNN_LSTM()# camera 2
+'''module2 = CNN_LSTM()# camera 2
 module3 = CNN_LSTM()# camera 3
 module4 = CNN_LSTM()# camera 4
 module5 = CNN_LSTM()# camera 5
 # requires 5 datasets, and each of them contains data from one camera
-
+'''
 
 
 '''class dataload:
@@ -107,7 +108,7 @@ data1 = torch.unsqueeze(data1, 1)
 
 
 # create labels
-labels = torch.tensor(np.array(np.arange(1,121)))
+labels = torch.tensor(np.repeat(np.arange(0,10),12))
 
 # concatenate data and labels for future usage
 '''train_dataset1 = []
@@ -132,19 +133,49 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(module1.parameters(), lr=arg.lr)
 
 # train model
-loss_list = []
+loss_list = np.zeros(120)
 output = torch.tensor([])
+acc_list = []
 #output = torch.zeros(len(dataloader1),100) # 100 will not change unless changing fully connectted layer
-for i, (images) in enumerate(dataloader1):
-    # Forward
-    _, out, _ = module1(images)
-    #output = torch.stack([output,out], dim=0)
-    output = torch.cat([output,torch.squeeze(out,dim=1)], dim=0)
-    #loss = criterion(output, labels[i].unsqueeze(0).long())
-    #loss_list.append(loss.item())
+
+for epoch in range(arg.epoch):
+    for i, images in enumerate(dataloader1):
+
+        '''Forward'''
+        r_out, h, _ = module1(images) # the last vector of r_out will be my feature vector
+        output = torch.squeeze(h,1)
+        loss = criterion(output, labels[i].unsqueeze(0).long())
+        loss_list[i] = loss
+
+        '''Backpropgation'''
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        '''Track accuracy'''
+        total = labels.size(0)
+        _, predicted = torch.max(output.data,1)
+        correct = (predicted.long() == labels.long()).sum().item()
+        acc_list.append(correct/total)
+        if (i+1) % 10 == 0:
+            print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
+                  .format(epoch + 1, arg.epoch, i + 1, len(dataloader1), loss.item(),
+                          (correct / total) * 100))
+            print(r_out[0])
+        #loss_list[i] = loss
+        '''output = torch.cat([output,torch.squeeze(out,dim=1)], dim=0)
+        loss = criterion(output, labels[i].unsqueeze(0).long())'''
+        #loss_list.append(loss.item())
 
 
-    '''output = torch.tensor(np.array(output.append(out)))
-    loss = criterion(output, labels)
-    loss_list.append(loss.item())'''
+        '''output = torch.tensor(np.array(output.append(out)))
+        loss = criterion(output, labels)
+        loss_list.append(loss.item())'''
 
+'''I'm planning to implement mini-batch, the batch size will be 12 considering the total number of dataloader1 is 120, and the number of batch will be 10 '''
+'''I am still going to us 11 different actions.'''
+'''The next problem will be how to transfer my video to dataloader1'''
+
+'''************************************************************'''
+'''I need the last vector of r_out as my feature vector'''
+'''************************************************************'''

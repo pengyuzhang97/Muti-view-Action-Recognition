@@ -11,12 +11,17 @@ data1 = torch.unsqueeze(data1,1)
 
 
 # create labels
-labels = torch.tensor(np.array(np.arange(1,121)))
+labels = torch.tensor(np.repeat(np.arange(1,11),12))
 
-train_loader1 = DataLoader(dataset=data1, batch_size=50,shuffle=False)
+dataloader1 = DataLoader(dataset=data1, batch_size=50, shuffle=False)
 
 
+for i, images in enumerate(dataloader1):
+    print(i)
+    print(images)
 
+# i = 0-119 index
+#
 
 loss = nn.CrossEntropyLoss()
 input = torch.randn(3, 5, requires_grad=True)
