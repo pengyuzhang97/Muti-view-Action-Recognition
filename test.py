@@ -100,7 +100,8 @@ module5 = CNN_LSTM()# camera 5
 '''==============================================='''
 '''type and format of my input dataset'''
 '''==============================================='''
-# assuming I have 50 images from camera 1
+# assuming that I collect 50 images from camera 1 per video
+# camera 1 includes 120 videos
 data1 = torch.randn(120*arg.batch_size, 64, 48)
 
 # Then I need to add one dimension which represents number of channels
@@ -135,6 +136,7 @@ optimizer = torch.optim.Adam(module1.parameters(), lr=arg.lr)
 # train model
 loss_list = np.zeros(120)
 output = torch.tensor([])
+correct = 0
 acc_list = []
 #output = torch.zeros(len(dataloader1),100) # 100 will not change unless changing fully connectted layer
 
@@ -155,13 +157,17 @@ for epoch in range(arg.epoch):
         '''Track accuracy'''
         total = labels.size(0)
         _, predicted = torch.max(output.data,1)
-        correct = (predicted.long() == labels.long()).sum().item()
+        if predicted.long() == labels[i].long():
+            correct = correct+1
+        #correct = (predicted.long() == labels[i].long()).sum().item()
         acc_list.append(correct/total)
-        if (i+1) % 10 == 0:
+        if (i+10) % 1 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
                   .format(epoch + 1, arg.epoch, i + 1, len(dataloader1), loss.item(),
                           (correct / total) * 100))
-            print(r_out[0])
+        if i == len(dataloader1)-1:
+            print('Feature vector {}%'.format(r_out[0]))
+
         #loss_list[i] = loss
         '''output = torch.cat([output,torch.squeeze(out,dim=1)], dim=0)
         loss = criterion(output, labels[i].unsqueeze(0).long())'''
