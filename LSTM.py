@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 
 class args:
     def __init__(self):
-        self.batch_size = 25
+        self.batch_size = 50
         self.num_epochs = 1
         self.lr = 0.0005
 

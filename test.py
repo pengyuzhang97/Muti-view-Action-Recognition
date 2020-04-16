@@ -43,8 +43,6 @@ class ConvNet(nn.Module):
         out = self.fc2(out)
         return out
 
-
-
 class CNN_LSTM(nn.Module):
     def __init__(self):
         super(CNN_LSTM,self).__init__()
@@ -62,7 +60,7 @@ class CNN_LSTM(nn.Module):
         r_out, (h, c) = self.lstm(c_out,(h0,c0))
         r_out = self.linear(r_out)
         h = self.linear(h)
-        return r_out, h, c
+        return r_out, h, c, c_out
 
 
 '''data1 = torch.randn(25,1,64,48)
@@ -144,7 +142,7 @@ for epoch in range(arg.epoch):
     for i, images in enumerate(dataloader1):
 
         '''Forward'''
-        r_out, h, _ = module1(images) # the last vector of r_out will be my feature vector
+        r_out, h, _, c_out = module1(images) # the last vector of r_out will be my feature vector
         output = torch.squeeze(h,1)
         loss = criterion(output, labels[i].unsqueeze(0).long())
         loss_list[i] = loss
@@ -161,12 +159,15 @@ for epoch in range(arg.epoch):
             correct = correct+1
         #correct = (predicted.long() == labels[i].long()).sum().item()
         acc_list.append(correct/total)
-        if (i+10) % 1 == 0:
+
+
+
+        if (i+10) % 10 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
                   .format(epoch + 1, arg.epoch, i + 1, len(dataloader1), loss.item(),
                           (correct / total) * 100))
         if i == len(dataloader1)-1:
-            print('Feature vector {}%'.format(r_out[0]))
+            print('Feature vector: {}%'.format(r_out[-1]))
 
         #loss_list[i] = loss
         '''output = torch.cat([output,torch.squeeze(out,dim=1)], dim=0)
