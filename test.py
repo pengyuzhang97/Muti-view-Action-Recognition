@@ -169,20 +169,5 @@ for epoch in range(arg.epoch):
         if i == len(dataloader1)-1:
             print('Feature vector: {}%'.format(r_out[-1]))
 
-        #loss_list[i] = loss
-        '''output = torch.cat([output,torch.squeeze(out,dim=1)], dim=0)
-        loss = criterion(output, labels[i].unsqueeze(0).long())'''
-        #loss_list.append(loss.item())
 
 
-        '''output = torch.tensor(np.array(output.append(out)))
-        loss = criterion(output, labels)
-        loss_list.append(loss.item())'''
-
-'''I'm planning to implement mini-batch, the batch size will be 12 considering the total number of dataloader1 is 120, and the number of batch will be 10 '''
-'''I am still going to us 11 different actions.'''
-'''The next problem will be how to transfer my video to dataloader1'''
-
-'''************************************************************'''
-'''I need the last vector of r_out as my feature vector'''
-'''************************************************************'''
