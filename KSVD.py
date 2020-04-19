@@ -1,12 +1,10 @@
 
 '''学习使用'''
 
-
 import numpy as np
 from sklearn import linear_model
 import scipy.misc
 from matplotlib import pyplot as plt
-
 
 class KSVD(object):
     def __init__(self, n_components, max_iter=30, tol=1e-6,

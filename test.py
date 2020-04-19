@@ -12,7 +12,7 @@ class args:
         self.batch_size = 50
         self.num_epochs = 1
         self.lr = 0.0005
-        self.epoch = 1
+        self.epoch = 20
 
 arg = args()
 
@@ -56,8 +56,8 @@ class CNN_LSTM(nn.Module):
     def forward(self,x):
         c_out = self.cnn(x)
         c_out = torch.unsqueeze(c_out,1)
-        h0 = torch.randn(1,1,64) # initialize h0
-        c0 = torch.randn(1,1,64) # initialize c0
+        h0 = torch.randn(1,1,64) # initialize h0  #############################################################################
+        c0 = torch.randn(1,1,64) # initialize c0  #############################################################################
         r_out, (h, c) = self.lstm(c_out,(h0,c0))
         r_out = self.linear(r_out)
         h = self.linear(h)
@@ -85,12 +85,14 @@ dataloader1 = DataLoader(dataset=data1, batch_size=50, shuffle=False)
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model1.parameters(), lr=arg.lr)
+optimizer = torch.optim.SGD(model1.parameters(), lr=arg.lr)
 # train model
 loss_list = np.zeros(len(labels))
 output = torch.tensor([])
+correct_matrix = np.zeros(arg.epoch)
 correct = 0
 acc_list = []
+total = np.zeros(arg.epoch)
 #output = torch.zeros(len(dataloader1),100) # 100 will not change unless changing fully connectted layer
 
 for epoch in range(arg.epoch):
@@ -108,19 +110,25 @@ for epoch in range(arg.epoch):
         optimizer.step()
 
         '''Track accuracy'''
-        total = labels.size(0)
+        total[epoch] = labels.size(0)
         _, predicted = torch.max(output.data,1)
         if predicted.long() == labels[i].long():
             correct = correct+1
         #correct = (predicted.long() == labels[i].long()).sum().item()
-        acc_list.append(correct/total)
+        correct_matrix[epoch] = correct
+        acc_list.append(correct/total[epoch])
 
         if (i+10) % 1 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
                   .format(epoch + 1, arg.epoch, i + 1, len(dataloader1), loss.item(),
-                          (correct / total) * 100))
+                          (correct_matrix[epoch] / total[epoch]) * 100))
         if i == len(dataloader1)-1:
             print('Feature vector: {}%'.format(r_out[-1]))
 
 
 
+# loss plot
+# h0 c0 initializaiton (LSTM)
+# optimizer(SGD or Adam or whatever effective)
+# CUDA command
+#
