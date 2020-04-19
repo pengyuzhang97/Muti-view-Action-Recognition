@@ -10,12 +10,13 @@ file5 = glob.glob("D:/UFL/OneDrive - University of Florida/Pattern Recognition/P
 
 labels1_ = np.repeat(np.arange(0,11),11)
 count = 0
+count_value = 0
 delete1 = np.zeros(28,int)
 number1 = 0
 
-for j in range(len(file1)):
+for j in range(len(file5)):
     videoCapture = cv2.VideoCapture()
-    videoCapture.open(file1[j])
+    videoCapture.open(file5[j])
     fps = videoCapture.get(cv2.CAP_PROP_FPS)
     frames = videoCapture.get(cv2.CAP_PROP_FRAME_COUNT)
     #print("fps=",fps,"frames=",frames,)
@@ -26,12 +27,13 @@ for j in range(len(file1)):
         number1 = number1+1
         continue
     elif frames>=50:
-        '''print("j=", j, "frames=", frames, )'''
+        count_value +=1
+        print("value=",count_value )
         for i in range(1, int(frames) + 1):
             if i <= 50:
                 ret, frame = videoCapture.read()
                 # cv2.imwrite("D:/UFL/OneDrive - University of Florida/Pattern Recognition/Project/trainingdata/cam1/1-%d.avi(%d).jpg"%(j+1,i),frame)
-                cv2.imwrite("D:\pictures/cam1/1-%d.avi(%d).jpg" % (j + 1, i), frame)
+                cv2.imwrite("D:\pictures/cam5/1-%d.avi(%d).jpg" % (j + 1, i), frame)
 
 labels1 = np.delete(labels1_,delete1)
-'''np.save('labels from cam1',labels1)'''
+np.save('labels from cam5',labels1)

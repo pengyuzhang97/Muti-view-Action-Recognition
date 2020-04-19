@@ -1,5 +1,6 @@
 #
 import pickle
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -51,7 +52,7 @@ class CNN_LSTM(nn.Module):
                            hidden_size=64,
                            num_layers=1, # h and c both have one layer
                            batch_first=False)
-        self.linear = nn.Linear(64,10) # h->out requiring passing a fully-connected layer to match # of labels which is 11 different action
+        self.linear = nn.Linear(64,11) # h->out requiring passing a fully-connected layer to match # of labels which is 11 different action
     def forward(self,x):
         c_out = self.cnn(x)
         c_out = torch.unsqueeze(c_out,1)
@@ -62,77 +63,31 @@ class CNN_LSTM(nn.Module):
         h = self.linear(h)
         return r_out, h, c, c_out
 
-
-'''data1 = torch.randn(25,1,64,48)
-# data1 should be from camera1, include 11 different actions
-# elements of data1 is frame, so I use 25 as cnn_batch_size to get time series, and the channel is 1 because of gray scale images.
-# input of cnn: batch size = 25 which means 25 frames; channels = 1; 64x48->pixels of each frame
-# output from cnn should be 1x500
-# input of lstm = 25x500; # of sequence should be 25, batch size is 1
-
-data2 = torch.randn(25,1,64,48)
-data3 = torch.randn(25,1,64,48)
-data4 = torch.randn(25,1,64,48)
-data5 = torch.randn(25,1,64,48)# the same defination as data1
-'''
-
-
-
-module1 = CNN_LSTM()# camera 1
-'''module2 = CNN_LSTM()# camera 2
-module3 = CNN_LSTM()# camera 3
-module4 = CNN_LSTM()# camera 4
-module5 = CNN_LSTM()# camera 5
+model1 = CNN_LSTM()# camera 1
+model2 = CNN_LSTM()# camera 2
+model3 = CNN_LSTM()# camera 3
+model4 = CNN_LSTM()# camera 4
+model5 = CNN_LSTM()# camera 5
 # requires 5 datasets, and each of them contains data from one camera
-'''
 
 
-'''class dataload:
-    def __init__(self,data):
-        self.data = data
-        self.data1 = torch.unsqueeze(self.data,1)
-        self.labels = np.ones(len(self.data1))
-        for'''
-
-'''============================================================================================================================'''
-'''==============================================='''
-'''type and format of my input dataset'''
-'''==============================================='''
-# assuming that I collect 50 images from camera 1 per video
-# camera 1 includes 120 videos
-data1 = torch.randn(120*arg.batch_size, 64, 48)
-
+#data1 = torch.randn(120*arg.batch_size, 64, 48)
+data = np.load('data from cam1.npy')
+data_ = torch.FloatTensor(data)
 # Then I need to add one dimension which represents number of channels
-data1 = torch.unsqueeze(data1, 1)
-
-
+data1 = torch.unsqueeze(data_, 1)
 # create labels
-labels = torch.tensor(np.repeat(np.arange(0,10),12))
-
-# concatenate data and labels for future usage
-'''train_dataset1 = []
-for i in range(len(data1)):
-	train_dataset1.append((data1[i],labels[i]))'''
-
-
-# Until now I have created a training dataset which contains 50 elements(images), and all of them have already been labeled
-# Nest step is to using 'Dataloader' to create batch size
-
+label_in = np.load('labels from cam1.npy')
+labels = torch.tensor(label_in)
 dataloader1 = DataLoader(dataset=data1, batch_size=50, shuffle=False)
 
-'''=========================================================================================================================='''
 
-
-
-# training process
-# Forget about the arg class above, let's testing our code under the condition that epoch is only 1
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(module1.parameters(), lr=arg.lr)
-
+optimizer = torch.optim.Adam(model1.parameters(), lr=arg.lr)
 # train model
-loss_list = np.zeros(120)
+loss_list = np.zeros(len(labels))
 output = torch.tensor([])
 correct = 0
 acc_list = []
@@ -142,7 +97,7 @@ for epoch in range(arg.epoch):
     for i, images in enumerate(dataloader1):
 
         '''Forward'''
-        r_out, h, _, c_out = module1(images) # the last vector of r_out will be my feature vector
+        r_out, h, _, c_out = model1(images) # the last vector of r_out will be my feature vector
         output = torch.squeeze(h,1)
         loss = criterion(output, labels[i].unsqueeze(0).long())
         loss_list[i] = loss
@@ -160,9 +115,7 @@ for epoch in range(arg.epoch):
         #correct = (predicted.long() == labels[i].long()).sum().item()
         acc_list.append(correct/total)
 
-
-
-        if (i+10) % 10 == 0:
+        if (i+10) % 1 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
                   .format(epoch + 1, arg.epoch, i + 1, len(dataloader1), loss.item(),
                           (correct / total) * 100))
