@@ -12,7 +12,7 @@ class args:
         self.batch_size = 50
         self.num_epochs = 1
         self.lr = 0.0005
-        self.epoch = 1
+        self.epoch = 25
 
 arg = args()
 
@@ -76,6 +76,7 @@ data = np.load('data from cam1.npy')
 data_ = torch.FloatTensor(data)
 # Then I need to add one dimension which represents number of channels
 data1 = torch.unsqueeze(data_, 1)
+
 # create labels
 label_in = np.load('labels from cam1.npy')
 labels = torch.tensor(label_in)
@@ -85,29 +86,31 @@ for i in range(len(resized_data)):
 	train_dataset.append((resized_data[i],labels[i]))'''
 
 
-dataloader1 = DataLoader(dataset=data1, batch_size=50, shuffle=False)
+data_set = []
+for  i in range(int(len(data1)/50)):
+    data_set.append((data1[i*50:i*50+50,:,:,:], labels[i]))
 
-
+dataloader1 = DataLoader(dataset=data_set, batch_size=1, shuffle=True)
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model1.parameters(), lr=arg.lr)
+
 # train model
 loss_list = np.zeros(len(labels))
 output = torch.tensor([])
-correct_matrix = np.zeros(arg.epoch)
-correct = 0
+correct = np.zeros(arg.epoch)
 acc_list = []
 total = np.zeros(arg.epoch)
 #output = torch.zeros(len(dataloader1),100) # 100 will not change unless changing fully connectted layer
 
 for epoch in range(arg.epoch):
-    for i, images in enumerate(dataloader1):
-
+    for i, (images, labels_) in enumerate(dataloader1):
+        images = torch.squeeze(images,0)
         '''Forward'''
         r_out, h, _, c_out = model1(images) # the last vector of r_out will be my feature vector
         output = torch.squeeze(h,1)
-        loss = criterion(output, labels[i].unsqueeze(0).long())
+        loss = criterion(output, labels_.long())
         loss_list[i] = loss
 
         '''Backpropgation'''
@@ -118,15 +121,15 @@ for epoch in range(arg.epoch):
         '''Track accuracy'''
         total[epoch] = labels.size(0)
         _, predicted = torch.max(output.data,1)
-        if predicted.long() == labels[i].long():
-            correct = correct+1
-        correct_matrix[epoch] = correct
+        if predicted.long() == labels_.long():
+            correct[epoch] = correct[epoch]+1
+
         acc_list.append(correct/total[epoch])
 
         if (i+10) % 1 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
                   .format(epoch + 1, arg.epoch, i + 1, len(dataloader1), loss.item(),
-                          (correct_matrix[epoch] / total[epoch]) * 100))
+                          (correct[epoch] / total[epoch]) * 100))
         if i == len(dataloader1)-1:
             print('Feature vector: {}%'.format(r_out[-1]))
 
