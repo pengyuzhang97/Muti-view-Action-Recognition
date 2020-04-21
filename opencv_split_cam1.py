@@ -8,7 +8,7 @@ file3 = glob.glob("D:/UFL/OneDrive - University of Florida/Pattern Recognition/P
 file4 = glob.glob("D:/UFL/OneDrive - University of Florida/Pattern Recognition/Project/trainingdata/traindata all 5 cameras/*cam4*.avi")
 file5 = glob.glob("D:/UFL/OneDrive - University of Florida/Pattern Recognition/Project/trainingdata/traindata all 5 cameras/*cam5*.avi")
 
-labels1_ = np.repeat(np.arange(0,11),11)
+labels1_ = np.tile(np.arange(0,11),11)
 count = 0
 count_value = 0
 delete1 = np.zeros(28,int)
