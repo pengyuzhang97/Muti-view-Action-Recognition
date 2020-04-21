@@ -124,7 +124,7 @@ for epoch in range(arg.epoch):
         if (i+10) % 1 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
                   .format(epoch + 1, arg.epoch, i + 1, len(dataloader1), loss.item(),
-                          (correct_matrix[epoch] / total[epoch]) * 100))
+                          (correct[epoch] / total[epoch]) * 100))
         if i == len(dataloader1)-1:
             print('Feature vector: {}%'.format(r_out[-1]))
 
