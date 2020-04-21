@@ -95,8 +95,7 @@ optimizer = torch.optim.Adam(model1.parameters(), lr=arg.lr)
 # train model
 loss_list = np.zeros(len(labels))
 output = torch.tensor([])
-correct_matrix = np.zeros(arg.epoch)
-correct = 0
+correct = np.zeros(arg.epoch)
 acc_list = []
 total = np.zeros(arg.epoch)
 #output = torch.zeros(len(dataloader1),100) # 100 will not change unless changing fully connectted layer
@@ -119,8 +118,7 @@ for epoch in range(arg.epoch):
         total[epoch] = labels.size(0)
         _, predicted = torch.max(output.data,1)
         if predicted.long() == labels[i].long():
-            correct = correct+1
-        correct_matrix[epoch] = correct
+            correct[epoch] = correct[epoch]+1
         acc_list.append(correct/total[epoch])
 
         if (i+10) % 1 == 0:

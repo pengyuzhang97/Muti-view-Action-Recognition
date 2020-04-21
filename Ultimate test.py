@@ -123,7 +123,6 @@ for epoch in range(arg.epoch):
         _, predicted = torch.max(output.data,1)
         if predicted.long() == labels_.long():
             correct[epoch] = correct[epoch]+1
-
         acc_list.append(correct/total[epoch])
 
         if (i+10) % 1 == 0:
