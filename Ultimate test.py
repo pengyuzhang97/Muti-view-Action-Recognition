@@ -11,8 +11,8 @@ class args:
     def __init__(self):
         self.batch_size = 50
         self.num_epochs = 1
-        self.lr = 0.0005
-        self.epoch = 25
+        self.lr = 0.00005
+        self.epoch = 30
 
 arg = args()
 

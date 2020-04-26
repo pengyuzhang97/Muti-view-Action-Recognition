@@ -11,8 +11,8 @@ class args:
     def __init__(self):
         self.batch_size = 50
         self.num_epochs = 1
-        self.lr = 0.0005
-        self.epoch = 1
+        self.lr = 0.00005
+        self.epoch = 60
 
 arg = args()
 
@@ -54,11 +54,12 @@ class CNN_LSTM(nn.Module):
                            batch_first=False)
         self.linear = nn.Linear(64,11) # h->out requiring passing a fully-connected layer to match # of labels which is 11 different action
     def forward(self,x):
-        c_out = self.cnn(x)
-        c_out = torch.unsqueeze(c_out,1)
-        h0 = torch.randn(1,1,64) # initialize h0  #############################################################################
-        c0 = torch.randn(1,1,64) # initialize c0  #############################################################################
-        r_out, (h, c) = self.lstm(c_out,(h0,c0))
+        c_out_ = self.cnn(x)
+        c_out = torch.unsqueeze(c_out_,1)
+        '''h0 = torch.randn(1,1,64) # initialize h0  #############################################################################
+        c0 = torch.randn(1,1,64) # initialize c0  #############################################################################'''
+        r_out, (h, c) = self.lstm(c_out)
+        '''r_out, (h, c) = self.lstm(c_out,(h0,c0))'''
         r_out = self.linear(r_out)
         h = self.linear(h)
         return r_out, h, c, c_out
