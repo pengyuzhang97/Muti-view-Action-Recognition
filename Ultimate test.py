@@ -102,7 +102,7 @@ output = torch.tensor([])
 correct = np.zeros(arg.epoch)
 acc_list = []
 total = np.zeros(arg.epoch)
-vector = np.zeros(11,64)
+vector = torch.zeros((11,64))
 #output = torch.zeros(len(dataloader1),100) # 100 will not change unless changing fully connectted layer
 
 for epoch in range(arg.epoch):
@@ -127,37 +127,37 @@ for epoch in range(arg.epoch):
         acc_list.append(correct/total[epoch])
 
         if labels_.long() == 0:
-            vector[0] = r_out[-1]
+            vector[0,:] = r_out[-1]
 
         if labels_.long() == 1:
-            vector[1] = r_out[-1]
+            vector[1,:] = r_out[-1]
 
         if labels_.long() == 2:
-            vector[2] = r_out[-1]
+            vector[2,:] = r_out[-1]
 
         if labels_.long() == 3:
-            vector[3] = r_out[-1]
+            vector[3,:] = r_out[-1]
 
         if labels_.long() == 4:
-            vector[4] = r_out[-1]
+            vector[4,:] = r_out[-1]
 
         if labels_.long() == 5:
-            vector[5] = r_out[-1]
+            vector[5,:] = r_out[-1]
 
         if labels_.long() == 6:
-            vector[6] = r_out[-1]
+            vector[6,:] = r_out[-1]
 
         if labels_.long() == 7:
-            vector[7] = r_out[-1]
+            vector[7,:] = r_out[-1]
 
         if labels_.long() == 8:
-            vector[8] = r_out[-1]
+            vector[8,:] = r_out[-1]
 
         if labels_.long() == 9:
-            vector[9] = r_out[-1]
+            vector[9,:] = r_out[-1]
 
         if labels_.long() == 10:
-            vector[10] = r_out[-1]
+            vector[10,:] = r_out[-1]
 
         if (i+10) % 1 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
@@ -168,14 +168,14 @@ for epoch in range(arg.epoch):
 
 
 
-torch.save(model1.cnn.layer1.state_dict(), 'net_params_layer1.pkl')
-torch.save(model1.cnn.layer2.state_dict(), 'net_params_layer2.pkl')
-torch.save(model1.cnn.layer3.state_dict(), 'net_params_layer3.pkl')
-torch.save(model1.cnn.fc1.state_dict(), 'net_params_linear1.pkl')
-torch.save(model1.cnn.fc2.state_dict(), 'net_params_linear2.pkl')
+torch.save(model1.cnn.layer1.state_dict(), '1net_params_layer1.pkl')
+torch.save(model1.cnn.layer2.state_dict(), '1net_params_layer2.pkl')
+torch.save(model1.cnn.layer3.state_dict(), '1net_params_layer3.pkl')
+torch.save(model1.cnn.fc1.state_dict(), '1net_params_linear1.pkl')
+torch.save(model1.cnn.fc2.state_dict(), '1net_params_linear2.pkl')
 
-torch.save(model1.lstm.state_dict(), 'net_params_lstm.pkl')
-torch.save(model1.linear.state_dict(), 'net_params_linear2.pkl')
+torch.save(model1.lstm.state_dict(), '1net_params_lstm.pkl')
+torch.save(model1.linear.state_dict(), '1net_params_linear2.pkl')
 
 
 # loss plot
