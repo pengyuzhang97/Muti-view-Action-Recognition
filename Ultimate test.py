@@ -12,7 +12,7 @@ class args:
         self.batch_size = 50
         self.num_epochs = 1
         self.lr = 0.00005
-        self.epoch = 30
+        self.epoch = 1
 
 arg = args()
 
@@ -59,7 +59,7 @@ class CNN_LSTM(nn.Module):
         h0 = torch.randn(1,1,64) # initialize h0  #############################################################################
         c0 = torch.randn(1,1,64) # initialize c0  #############################################################################
         r_out, (h, c) = self.lstm(c_out,(h0,c0))
-        r_out = self.linear(r_out)
+        #r_out = self.linear(r_out)
         h = self.linear(h)
         return r_out, h, c, c_out
 
@@ -132,6 +132,16 @@ for epoch in range(arg.epoch):
         if i == len(dataloader1)-1:
             print('Feature vector: {}%'.format(r_out[-1]))
 
+
+
+torch.save(model1.cnn.layer1.state_dict(), 'net_params_layer1.pkl')
+torch.save(model1.cnn.layer2.state_dict(), 'net_params_layer2.pkl')
+torch.save(model1.cnn.layer3.state_dict(), 'net_params_layer3.pkl')
+torch.save(model1.cnn.fc1.state_dict(), 'net_params_linear1.pkl')
+torch.save(model1.cnn.fc2.state_dict(), 'net_params_linear2.pkl')
+
+torch.save(model1.lstm.state_dict(), 'net_params_lstm.pkl')
+torch.save(model1.linear.state_dict(), 'net_params_linear2.pkl')
 
 
 # loss plot
