@@ -2,7 +2,7 @@ import cv2
 import glob as glob
 import numpy as np
 
-matrix1 = glob.glob("D:\pictures/cam5/*avi*.jpg")
+matrix1 = glob.glob("D:\pictures/cam1/*avi*.jpg")
 
 image = cv2.imread(matrix1[0],cv2.IMREAD_GRAYSCALE)
 real_image = image[np.newaxis, :]
@@ -16,7 +16,7 @@ for i in range(1,len(matrix1)):
 
 
 
-np.save('data from cam5',real_image)
+np.save('data from cam1',real_image)
 
 
 

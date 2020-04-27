@@ -102,6 +102,7 @@ output = torch.tensor([])
 correct = np.zeros(arg.epoch)
 acc_list = []
 total = np.zeros(arg.epoch)
+vector = np.zeros(11,64)
 #output = torch.zeros(len(dataloader1),100) # 100 will not change unless changing fully connectted layer
 
 for epoch in range(arg.epoch):
@@ -124,6 +125,39 @@ for epoch in range(arg.epoch):
         if predicted.long() == labels_.long():
             correct[epoch] = correct[epoch]+1
         acc_list.append(correct/total[epoch])
+
+        if labels_.long() == 0:
+            vector[0] = r_out[-1]
+
+        if labels_.long() == 1:
+            vector[1] = r_out[-1]
+
+        if labels_.long() == 2:
+            vector[2] = r_out[-1]
+
+        if labels_.long() == 3:
+            vector[3] = r_out[-1]
+
+        if labels_.long() == 4:
+            vector[4] = r_out[-1]
+
+        if labels_.long() == 5:
+            vector[5] = r_out[-1]
+
+        if labels_.long() == 6:
+            vector[6] = r_out[-1]
+
+        if labels_.long() == 7:
+            vector[7] = r_out[-1]
+
+        if labels_.long() == 8:
+            vector[8] = r_out[-1]
+
+        if labels_.long() == 9:
+            vector[9] = r_out[-1]
+
+        if labels_.long() == 10:
+            vector[10] = r_out[-1]
 
         if (i+10) % 1 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
