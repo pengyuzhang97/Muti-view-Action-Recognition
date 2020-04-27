@@ -16,6 +16,42 @@ class args:
 
 arg = args()
 
+
+def decision(labels_):
+    if labels_.long() == 0:
+        vector[0, :] = r_out[-1]
+
+    if labels_.long() == 1:
+        vector[1, :] = r_out[-1]
+
+    if labels_.long() == 2:
+        vector[2, :] = r_out[-1]
+
+    if labels_.long() == 3:
+        vector[3, :] = r_out[-1]
+
+    if labels_.long() == 4:
+        vector[4, :] = r_out[-1]
+
+    if labels_.long() == 5:
+        vector[5, :] = r_out[-1]
+
+    if labels_.long() == 6:
+        vector[6, :] = r_out[-1]
+
+    if labels_.long() == 7:
+        vector[7, :] = r_out[-1]
+
+    if labels_.long() == 8:
+        vector[8, :] = r_out[-1]
+
+    if labels_.long() == 9:
+        vector[9, :] = r_out[-1]
+
+    if labels_.long() == 10:
+        vector[10, :] = r_out[-1]
+
+
 class ConvNet(nn.Module):
     def __init__(self):
         super(ConvNet, self).__init__()
@@ -124,40 +160,9 @@ for epoch in range(arg.epoch):
         _, predicted = torch.max(output.data,1)
         if predicted.long() == labels_.long():
             correct[epoch] = correct[epoch]+1
+            decision(labels_)
         acc_list.append(correct/total[epoch])
 
-        if labels_.long() == 0:
-            vector[0,:] = r_out[-1]
-
-        if labels_.long() == 1:
-            vector[1,:] = r_out[-1]
-
-        if labels_.long() == 2:
-            vector[2,:] = r_out[-1]
-
-        if labels_.long() == 3:
-            vector[3,:] = r_out[-1]
-
-        if labels_.long() == 4:
-            vector[4,:] = r_out[-1]
-
-        if labels_.long() == 5:
-            vector[5,:] = r_out[-1]
-
-        if labels_.long() == 6:
-            vector[6,:] = r_out[-1]
-
-        if labels_.long() == 7:
-            vector[7,:] = r_out[-1]
-
-        if labels_.long() == 8:
-            vector[8,:] = r_out[-1]
-
-        if labels_.long() == 9:
-            vector[9,:] = r_out[-1]
-
-        if labels_.long() == 10:
-            vector[10,:] = r_out[-1]
 
         if (i+10) % 1 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
