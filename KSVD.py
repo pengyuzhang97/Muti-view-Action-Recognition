@@ -6,8 +6,12 @@ from sklearn import linear_model
 import scipy.misc
 from matplotlib import pyplot as plt
 
+
+matrix = np.load('fi1.npy')
+
+
 class KSVD(object):
-    def __init__(self, n_components, max_iter=30, tol=1e-6,
+    def __init__(self, n_components, max_iter=30, tol=1e-3,
                  n_nonzero_coefs=None):
         """
         稀疏模型Y = DX，Y为样本矩阵，使用KSVD动态更新字典矩阵D和稀疏矩阵X
@@ -63,7 +67,8 @@ class KSVD(object):
 
 
 if __name__ == '__main__':
-    im_ascent = scipy.misc.ascent().astype(np.float)
+    #im_ascent = scipy.misc.ascent().astype(np.float)
+    im_ascent = matrix.astype(np.float)
     ksvd = KSVD(300)
     dictionary, sparsecode = ksvd.fit(im_ascent)
     plt.figure()
